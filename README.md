@@ -59,15 +59,129 @@ npm run build   # Compila el proyecto a JavaScript
 npm start       # Ejecuta el build en producción
 ```
 
-## 🌱 Próximas funcionalidades
+## 🌱 API Documentación – App Para Brillar
 
-- [ ] Endpoint de login con Firebase
-- [ ] Esquema de usuario en MongoDB
-- [ ] Middleware de autenticación
-- [ ] Integración con Stripe o MercadoPago
-- [ ] Administración de contenidos desde panel
+Este archivo describe los endpoints y procesos fundamentales para el backend de la aplicación “App Para Brillar”. Organizado por módulos funcionales.
 
 ---
 
-> Este proyecto forma parte del ecosistema de productos de la app **Para Brillar**.  
-> Más adelante se documentarán los endpoints, flujo de autenticación, y el esquema de contenidos dinámicos.
+## 🔐 1. AUTENTICACIÓN (OAuth mediante Firebase)
+
+### POST /auth/login
+- Valida el token de Firebase y otorga acceso.
+- Entrada: `firebaseToken`
+- Salida: JWT backend y datos del usuario
+
+### POST /auth/register
+- Registra al usuario tras autenticación con Firebase.
+- Entrada: `firebaseToken`, `userInfo`
+- Salida: Confirmación y datos del usuario
+
+### POST /auth/logout
+- Invalida la sesión del usuario.
+- Entrada: token
+- Salida: Confirmación
+
+### POST /auth/refresh-token
+- Renueva el token de acceso.
+- Entrada: `refreshToken`
+- Salida: Nuevo `accessToken`
+
+### GET /auth/profile
+- Devuelve datos del usuario autenticado.
+- Entrada: token
+- Salida: Perfil del usuario
+
+---
+
+## 📲 2. CONTENIDO DE LA APP MÓVIL Y DASHBOARD ADMINISTRATIVO
+
+### PARA LA APP MÓVIL
+
+#### GET /content/messages
+- Devuelve mensajes/frases.
+- Entrada: filtros opcionales
+- Salida: Lista de mensajes
+
+#### GET /content/tips
+- Devuelve tips por tipo de usuario o estado emocional.
+- Entrada: filtros opcionales
+- Salida: Lista de tips
+
+### PARA EL DASHBOARD ADMINISTRATIVO
+
+#### GET /admin/content
+- Lista de todo el contenido
+- Entrada: filtros/paginación
+- Salida: Contenido completo
+
+#### POST /admin/content
+- Crear nuevo contenido
+- Entrada: `tipo`, `título`, `cuerpo`, `categoría`, etc.
+- Salida: Contenido creado
+
+#### PUT /admin/content/:id
+- Editar contenido
+- Entrada: `id`, nuevos valores
+- Salida: Contenido actualizado
+
+#### DELETE /admin/content/:id
+- Eliminar contenido
+- Entrada: ID por URL
+- Salida: Confirmación
+
+---
+
+## 💳 3. SISTEMA DE PAGOS
+
+### Para Google Play / Apple Store
+
+#### POST /payments/validate-receipt
+- Valida un recibo de compra móvil
+- Entrada: `platform`, `receiptData`
+- Salida: Estado actualizado de suscripción
+
+### Para Stripe / MercadoPago
+
+#### POST /payments/create-checkout-session
+- Crea sesión de pago
+- Entrada: `userId`, `planId`, `paymentProvider`
+- Salida: URL de pago
+
+#### POST /payments/webhook
+- Recibe notificaciones del proveedor
+- Entrada: evento del proveedor
+- Salida: Actualización de suscripción
+
+#### GET /payments/status
+- Consulta estado del pago
+- Entrada: `userId`
+- Salida: Estado actual de pago
+
+---
+
+## 🛠 4. ADMINISTRACIÓN GENERAL
+
+### GET /admin/users
+- Lista de usuarios
+- Entrada: filtros
+- Salida: Lista con paginación
+
+### PUT /admin/users/:id
+- Editar datos del usuario
+- Entrada: ID y datos
+- Salida: Usuario modificado
+
+### DELETE /admin/users/:id
+- Eliminar usuario
+- Entrada: ID
+- Salida: Confirmación
+
+### GET /admin/dashboard/metrics
+- Estadísticas generales
+- Entrada: ninguna
+- Salida: KPIs del sistema
+
+---
+
+> Este proyecto forma parte del ecosistema de productos de la app **Para Brillar**.
